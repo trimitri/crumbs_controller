@@ -7,7 +7,7 @@
 const OPTIONS = {
   maxlength: [30, 30, 30],
   separator: `<span class="separator">&nbsp;&gt; </span>`,
-  container: 'nav.breadcrumbs',
+  container: '#crumbs_container',
   itemWrap: ['<span class="item">', '</span>'],
 };
 
@@ -15,7 +15,7 @@ class CrumbsController {
   constructor(settings) {
     this.maxlength = settings.maxlength;
     this.separator = settings.separator;
-    this.container = document.querySelector(settings.container);
+    this.container = settings.container;
     // The working area where the new state is assembled.
     this.staging = [];
   }
@@ -23,7 +23,7 @@ class CrumbsController {
   /* Get the new state from staging area and publish it.
    */
   publish() {
-    this.container.innerHTML = this._buildHtml();
+    document.querySelector(this.container).innerHTML = this._buildHtml();
   }
 
   /* Update the staging area.
@@ -33,6 +33,7 @@ class CrumbsController {
    */
   set(level, text) {
     this.staging[level] = text;
+    this.staging = this.staging.slice(0, level + 1);
   }
 
   /* Generate publishable HTML from staging area.
