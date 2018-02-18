@@ -13,6 +13,8 @@ class CrumbsController {
     this.staging = [];
   }
 
+  /* Clear all items from staging and publish the void.
+   */
   clear() {
     this.staging = [];
     this.publish();
