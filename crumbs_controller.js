@@ -11,6 +11,29 @@ class CrumbsController {
     this.container = settings.container;
     // The working area where the new state is assembled.
     this.staging = [];
+    this.lists = [];
+  }
+
+  /* Add a multiple choice item to the given levels list.
+   *
+   * If this item has the same family as the previous one, the list is
+   * extended.  If it has a different family, the previous list is dropped and
+   * a new list is started.
+   *
+   * @param {int} level: The hierarchy level.
+   * @param {Any} family: Family indicator (e.g. string).  Has to be ===-able.
+   * @param {str} prefix: Prefix the list of value with this string when adding
+   *             it to the rootline.
+   * @param {str} text: The list item's description.
+   */
+  addToList(level, family, prefix, text) {
+    if (this.lists[level] && this.lists[level].family === family) {
+      this.lists[level].push(text);
+    } else {
+      this.lists[level] = [text];
+      this.lists[level].family = family;
+    }
+    this.set(level, `${prefix}${this.lists[level].join(', ')}`);
   }
 
   /* Clear all items from staging and publish the void.
@@ -24,6 +47,33 @@ class CrumbsController {
    */
   publish() {
     document.querySelector(this.container).innerHTML = this._buildHtml();
+  }
+
+  /* Remove a multiple choice item from the current list.
+   *
+   * If this item has the same family as the previous one, the item is removed.
+   * Otherwise, the list is reset altogether.
+   *
+   * @param {int} level: The hierarchy level.
+   * @param {Any} family: List family indicator (e.g. string).  Has to be
+   *             ===-able.
+   * @param {str} prefix: Prefix the list of values with this string when
+   *             adding it to the rootline.
+   * @param {str} text: The list item's description.
+   */
+  removeFromList(level, family, prefix, text) {
+    if (this.lists[level] && this.lists[level].family === family) {
+      const index = this.lists[level].findIndex(name => name === text);
+      if (index >= 0) {
+        this.lists[level].splice(index, 1);
+      } else {
+        console.warn("Tried to remove non-existent list item.");
+      }
+    } else {
+      this.lists[level] = [];
+      this.lists[level].family = family;
+    }
+    this.set(level, `${prefix}${this.lists[level].join(', ')}`);
   }
 
   /* Update the staging area.

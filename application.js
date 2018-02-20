@@ -59,8 +59,33 @@ document.addEventListener('DOMContentLoaded', () => {
         event = 'click';
     }
     trigger.addEventListener(event, () => {
-      crumbs.set(trigger.dataset.crumbsLevel, trigger.dataset.crumbsText);
-      crumbs.publish();
+      const text = trigger.dataset.crumbsText;
+      const level = trigger.dataset.crumbsLevel;
+      if (trigger.dataset.crumbsList) {
+        if (trigger.checked) {
+          crumbs.addToList(
+            level,
+            trigger.dataset.crumbsList,
+            trigger.dataset.crumbsListPrefix,
+            text,
+          );
+        } else {
+          crumbs.removeFromList(
+            level,
+            trigger.dataset.crumbsList,
+            trigger.dataset.crumbsListPrefix,
+            text,
+          );
+        }
+      } else {
+        crumbs.set(trigger.dataset.crumbsLevel, trigger.dataset.crumbsText);
+      }
+      if (trigger.dataset.crumbsPublish) {
+        crumbs.publish();
+      }
     });
   }
+  document.getElementById('publish_btn').addEventListener('click', () => {
+    crumbs.publish();
+  });
 });
