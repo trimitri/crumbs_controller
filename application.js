@@ -4,6 +4,8 @@
 /* eslint-env es6, browser */
 /* eslint no-restricted-syntax: "off" */
 
+import CrumbsController from './crumbs_controller';
+
 /* Markup Ideas
  * ============
  * All DOM elements that should interact with the breadcrumbs must be marked
@@ -19,9 +21,10 @@
  * Optional Data
  * -------------
  *
- * data-crumbs-event (string representing event) -> 'click':
+ * data-crumbs-event (string representing event):
  *     Which event should trigger this element being incorporated into the
- *     rootline nav?
+ *     rootline nav?  This defaults to something sensible based on the type of
+ *     element.
  *
  * data-crumbs-publish (boolean) -> 'false':
  *     Publish the rootline right after as this element's contribution was
@@ -44,4 +47,20 @@ const OPTIONS = {
   itemWrap: ['<span class="item">', '</span>'],
 };
 
-const crumbs = new CrumbsController(OPTIONS);
+document.addEventListener('DOMContentLoaded', () => {
+  const crumbs = new CrumbsController(OPTIONS);
+  for (const trigger of document.querySelectorAll('[data-crumbs-level]')) {
+    let event;
+    switch (trigger.tagName) {
+      case 'INPUT':
+        event = 'change';
+        break;
+      default:
+        event = 'click';
+    }
+    trigger.addEventListener(event, () => {
+      console.log('popp');
+      crumbs.publish();
+    });
+  }
+});

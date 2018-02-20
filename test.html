@@ -7,5 +7,77 @@
 		<nav class="breadcrumbs">
 			<p>You are here: <span id="crumbs_container"></span></p>
 		</nav>
+		<ul class="checkboxList">
+			<li>
+				<label>
+					<input type="checkbox"
+						data-crumbs-level="0"
+						data-crumbs-text="akut"
+						data-crumbs-publish="true"
+						data-crumbs-list="leistungen"
+						data-crumbs-list-prefix="Leistungsgebiete: " />
+					Institutionen mit Leistungen der Akutsomatik
+				</label>
+			</li>
+			<li>
+				<label>
+					<input type="checkbox"
+						data-crumbs-level="0"
+						data-crumbs-text="psych"
+						data-crumbs-list="leistungen"
+						data-crumbs-list-prefix="Leistungsgebiete: " />
+					Institutionen mit Leistungen der Psychiatrie
+				</label>
+			</li>
+			<li>
+				<label>
+					<input type="checkbox"
+						data-crumbs-level="0"
+						data-crumbs-text="reha"
+						data-crumbs-list="leistungen"
+						data-crumbs-list-prefix="Leistungsgebiete: " />
+					Institutionen mit Leistungen der Rehabilitation
+				</label>
+			</li>
+		</ul>
+
+		<ul class="checkboxList">
+			<li>
+				<label>
+					<input type="radio" name="notfall" data-crumbs-level="0" data-crumbs-text="Medizin" />
+					Medizin/Chirurgie 
+				</label>
+			</li><li>
+				<label>
+					<input type="radio" name="notfall" data-crumbs-level="0" data-crumbs-text="Pädiatrie" />
+					Pädiatrie (Kinder)
+				</label>
+			</li><li>
+				<label>
+					<input type="radio" name="notfall" data-crumbs-level="0" data-crumbs-text="Gynäkologie" />
+					Geburtshilfe/Gynäkologie
+				</label>
+			</li><li>
+				<label>
+					<input type="radio" name="notfall" data-crumbs-level="0" data-crumbs-text="Psychiatrie" />
+					Psychiatrie *
+				</label>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<label>
+					<input type="radio" data-crumbs-level="1" data-crumbs-text="Erste Wahl"/>
+					Erstwähler
+				</label>
+			</li>
+			<li>
+				<label>
+					<input type="radio" data-crumbs-level="1" data-crumbs-text="Zweite Wahl"/>
+					Zweitwähler
+				</label>
+			</li>
+		</ul>
+		<input id="publish_btn" type="button" value="Publish!" />
 	</body>
 </html>

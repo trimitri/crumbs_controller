@@ -4,7 +4,7 @@
 /* eslint-env es6, browser */
 /* eslint no-restricted-syntax: "off" */
 
-class CrumbsController {
+export default class CrumbsController {
   constructor(settings) {
     this.maxlength = settings.maxlength;
     this.separator = settings.separator;
