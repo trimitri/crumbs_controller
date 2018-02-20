@@ -3,8 +3,7 @@
 
 /* eslint-env es6, browser */
 /* eslint no-restricted-syntax: "off" */
-
-import CrumbsController from './crumbs_controller';
+/* global CrumbsController */
 
 /* Markup Ideas
  * ============
@@ -48,6 +47,7 @@ const OPTIONS = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  console.log("loaded");
   const crumbs = new CrumbsController(OPTIONS);
   for (const trigger of document.querySelectorAll('[data-crumbs-level]')) {
     let event;
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event = 'click';
     }
     trigger.addEventListener(event, () => {
-      console.log('popp');
+      crumbs.set(trigger.dataset.crumbsLevel, trigger.dataset.crumbsText);
       crumbs.publish();
     });
   }
