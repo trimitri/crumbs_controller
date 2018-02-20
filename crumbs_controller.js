@@ -6,12 +6,14 @@
 
 class CrumbsController {
   constructor(settings) {
-    this.maxlength = settings.maxlength;
-    this.separator = settings.separator;
     this.container = settings.container;
+    // An array of two strings, pre- and appended around each item.
+    this.itemWrap = settings.itemWrap;
+    this.lists = [];
+    this.maxLength = settings.maxLength;
+    this.separator = settings.separator;
     // The working area where the new state is assembled.
     this.staging = [];
-    this.lists = [];
   }
 
   /* Add a multiple choice item to the given levels list.
@@ -73,7 +75,11 @@ class CrumbsController {
       this.lists[level] = [];
       this.lists[level].family = family;
     }
-    this.set(level, `${prefix}${this.lists[level].join(', ')}`);
+    if (this.lists[level].length) {
+      this.set(level, `${prefix}${this.lists[level].join(', ')}`);
+    } else {
+      this.set(level, '');
+    }
   }
 
   /* Update the staging area.
@@ -82,14 +88,15 @@ class CrumbsController {
    * drop all the child levels.
    */
   set(level, text) {
-    this.staging[level] = text;
+    this.staging[level] = this._ellipsicate(level, text);
     this.staging = this.staging.slice(0, level + 1);
   }
 
   /* Generate publishable HTML from staging area.
    */
   _buildHtml() {
-    return this.staging.join(this.separator);
+    const wrapped = this.staging.map(content => `${this.itemWrap[0]}${content}${this.itemWrap[1]}`);
+    return wrapped.join(this.separator);
   }
 
   /* Shorten a string to it's levels maximum allowable length.
@@ -97,8 +104,14 @@ class CrumbsController {
    * This methods tries to retain as much meaningfulness as possible by
    * shortening the middle of the string.
    */
-  static _ellipsicate(level, text) {
-    // TODO: Implement _ellipsicate(): copy from python?
-    return text;
+  _ellipsicate(level, text) {
+    const len = this.maxLength[level];
+    if (text.length <= len) {
+      return text;
+    }
+    const partLength = parseInt((len - 5) / 2, 10);
+    const head = text.slice(0, partLength + 1);
+    const tail = text.slice(text.length - partLength);
+    return `${head} ... ${tail}`;
   }
 }

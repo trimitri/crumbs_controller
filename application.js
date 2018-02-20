@@ -1,15 +1,24 @@
-/* Example usage of CrumbsController.
- */
+/* Using CrumbsController to show a rootline navigation above the map search.
+*/
 
 /* eslint-env es6, browser */
 /* eslint no-restricted-syntax: "off" */
 /* global CrumbsController */
 
-/* Markup Ideas
- * ============
- * All DOM elements that should interact with the breadcrumbs must be marked
- * with at least the following HTML data attributes:
+/* Markup Manual
+ * =============
  *
+ * DOM elements that will interact with the rootline navigation ("breadcrumbs")
+ * will usually be form controls.  But with proper markup, basically any
+ * element with any event can trigger a rootline change.
+ *
+ * Sometimes, lists of labels need to be aggregated before being shown in the
+ * rootline.  This "list mode" (see below) currently only supports checkbox and
+ * radio inputs.
+ *
+ *
+ * Mandatory HTML Data Attributes
+ * ------------------------------
  * data-crumbs-level (integer):
  *     integer, 0 or more.  The hierarchy level this component acts on.
  *
@@ -19,7 +28,6 @@
  *
  * Optional Data
  * -------------
- *
  * data-crumbs-event (string representing event):
  *     Which event should trigger this element being incorporated into the
  *     rootline nav?  This defaults to something sensible based on the type of
@@ -39,53 +47,58 @@
  *     The prefix to use before the listing, like:
  *     "<Selected foos>: foo1, foo2"
  */
-const OPTIONS = {
-  maxlength: [30, 30, 30],
-  separator: `<span class="separator">&nbsp;&gt; </span>`,
-  container: '#crumbs_container',
-  itemWrap: ['<span class="item">', '</span>'],
-};
 
-document.addEventListener('DOMContentLoaded', () => {
-  console.log("loaded");
-  const crumbs = new CrumbsController(OPTIONS);
-  for (const trigger of document.querySelectorAll('[data-crumbs-level]')) {
-    let event;
-    switch (trigger.tagName) {
-      case 'INPUT':
-        event = 'change';
-        break;
-      default:
-        event = 'click';
-    }
-    trigger.addEventListener(event, () => {
-      const text = trigger.dataset.crumbsText;
-      const level = trigger.dataset.crumbsLevel;
-      if (trigger.dataset.crumbsList) {
-        if (trigger.checked) {
-          crumbs.addToList(
-            level,
-            trigger.dataset.crumbsList,
-            trigger.dataset.crumbsListPrefix,
-            text,
-          );
+(function protectGlobalScope() {
+  const OPTIONS = {
+    maxLength: [40, 40, 50],
+    separator: '',
+    container: 'nav.breadcrumbs>.path',
+    itemWrap: ['<span class="item">', '</span>'],
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log("loaded");
+    const crumbs = new CrumbsController(OPTIONS);
+    for (const trigger of document.querySelectorAll('[data-crumbs-level]')) {
+      let event;
+      switch (trigger.tagName) {
+        case 'INPUT':
+          event = 'change';
+          break;
+        default:
+          event = 'click';
+      }
+      trigger.addEventListener(event, () => {
+        const text = trigger.dataset.crumbsText;
+        const level = trigger.dataset.crumbsLevel;
+        if (trigger.dataset.crumbsList) {
+          if (trigger.checked) {
+            crumbs.addToList(
+              level,
+              trigger.dataset.crumbsList,
+              trigger.dataset.crumbsListPrefix,
+              text,
+            );
+          } else {
+            crumbs.removeFromList(
+              level,
+              trigger.dataset.crumbsList,
+              trigger.dataset.crumbsListPrefix,
+              text,
+            );
+          }
         } else {
-          crumbs.removeFromList(
-            level,
-            trigger.dataset.crumbsList,
-            trigger.dataset.crumbsListPrefix,
-            text,
-          );
+          crumbs.set(trigger.dataset.crumbsLevel, trigger.dataset.crumbsText);
         }
-      } else {
-        crumbs.set(trigger.dataset.crumbsLevel, trigger.dataset.crumbsText);
-      }
-      if (trigger.dataset.crumbsPublish) {
-        crumbs.publish();
-      }
-    });
-  }
-  document.getElementById('publish_btn').addEventListener('click', () => {
-    crumbs.publish();
+        if (trigger.dataset.crumbsPublish) {
+          crumbs.publish();
+        }
+      });
+    }
+    for (button of document.querySelectorAll('.mapsearchResetBtn')) {
+      button.addEventListener('click', () => crumbs.clear());
+      // We need the arrow function to guard against event handler "this"
+      // injection.
+    }
   });
-});
+}());
